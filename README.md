@@ -20,7 +20,7 @@ for small projects that need routing, auth and a database without the complexity
 - Zero frontend framework dependencies
 
 ## Getting Started
-\`\`\`bash
+\`\`\`code
 git clone https://github.com/RayhanAbdullah1/expressSpaAuth
 npm install
 cp .env.example .env
