@@ -1,1 +1,1 @@
-require('./app/libries/routeWrapper');
+require('./app/libraries/routeWrapper');

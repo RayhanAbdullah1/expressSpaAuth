@@ -1,5 +1,5 @@
-const { redirectToAuth, setCookie } = require("../../libries/helper");
-const db = require("../../libries/mysqlORM");
+const { redirectToAuth, setCookie } = require("../../libraries/helper");
+const db = require("../../libraries/mysqlORM");
 
 const logoutUserHandler = async (req, res) => {
     try {
@@ -8,20 +8,20 @@ const logoutUserHandler = async (req, res) => {
             .join('users as u', 'st.user_id', '=', 'u.id')
             .where('st.token', req.cookies.auth_token)
             .first();
-            
+
         if (dbSessionData.user_id === Number(req.user.id) && dbSessionData.email === req.body.email) {
-            await db('sessions').where('token', req.cookies.auth_token).del(); 
+            await db('sessions').where('token', req.cookies.auth_token).del();
             setCookie(res, "auth_token");
             return res.redirect('/');
         } else {
             return redirectToAuth(req, res, "app/dashboard", {
-                error : "Something went wrong!"
+                error: "Something went wrong!"
             });
         }
-        
+
     } catch (err) {
         return redirectToAuth(req, res, "app/dashboard", {
-            error : { message : "Something wrong ..."}
+            error: { message: "Something wrong ..." }
         });
     }
 }
@@ -29,18 +29,18 @@ const logoutUserHandler = async (req, res) => {
 const dashboardPageHandler = async (req, res) => {
     try {
         return redirectToAuth(req, res, "app/dashboard", {
-            message : { message : "User logged in successfully."}
+            message: { message: "User logged in successfully." }
         })
     } catch (error) {
         console.error(error);
     }
-    
+
 }
 
 
 
 
-module.exports ={
+module.exports = {
     dashboardPageHandler,
     logoutUserHandler,
 }

@@ -1,10 +1,10 @@
-const { redirectTo, hashPassword, mapJoiErrorsByField, generateRandomHash, setCookie } = require("../libries/helper");
-const bcrypt                                                                           = require('bcryptjs');
-const { query }                                                                        = require("../libries/mysql");
-const { unique }                                                                       = require("../libries/mysqlORMWrapper");
-const { die }                                                                          = require("../libries/debugHelper");
-const Joi                                                                              = require('joi');
-const db                                                                               = require("../libries/mysqlORM");
+const { redirectTo, hashPassword, mapJoiErrorsByField, generateRandomHash, setCookie } = require("../libraries/helper");
+const bcrypt = require('bcryptjs');
+const { query } = require("../libraries/mysql");
+const { unique } = require("../libraries/mysqlORMWrapper");
+const { die } = require("../libraries/debugHelper");
+const Joi = require('joi');
+const db = require("../libraries/mysqlORM");
 
 const homePageHandler = (req, res) => {
     return redirectTo(req, res, 'index');
@@ -27,28 +27,28 @@ const loginUserHandler = async (req, res) => {
 
     try {
         await schema.validateAsync(req.body, { abortEarly: false });
-        let user = await db('users').where({ email : req.body.email }).first();
+        let user = await db('users').where({ email: req.body.email }).first();
         if (!user) {
             return redirectTo(req, res, "index", {
-                message : { message : "No user found" }
+                message: { message: "No user found" }
             })
         } else {
             let passMatch = await comparePassword(req.body.password, user.password);
             if (!passMatch) {
                 return redirectTo(req, res, "index", {
-                    message : { message : "Password Mismatch" }
+                    message: { message: "Password Mismatch" }
                 })
             } else {
                 let hashString = generateRandomHash(80);
-                await db('sessions').where({ user_id : user.id }).del();
+                await db('sessions').where({ user_id: user.id }).del();
                 await db('sessions').insert({
-                    user_id   : user.id,
-                    name      : "auth_token",
-                    token     : hashString,
+                    user_id: user.id,
+                    name: "auth_token",
+                    token: hashString,
                     created_at: new Date(),
                     expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
                 });
-                
+
                 setCookie(res, "auth_token", hashString, 6);
                 return res.redirect('/dashboard');
             }
@@ -57,11 +57,11 @@ const loginUserHandler = async (req, res) => {
     } catch (err) {
         if (err.isJoi) {
             return redirectTo(req, res, "index", {
-                error : mapJoiErrorsByField(err)
+                error: mapJoiErrorsByField(err)
             });
         }
         return redirectTo(req, res, "index", {
-            error : err
+            error: err
         });
     }
 }
@@ -78,7 +78,7 @@ async function comparePassword(plaintextPassword, storedHash) {
 
 const registerPageHandler = async (req, res) => {
     return redirectTo(req, res, "auth/register", {
-        data : {users : ''}
+        data: { users: '' }
     });
 };
 
@@ -114,23 +114,23 @@ const registerUserHandler = async (req, res) => {
     try {
         await schema.validateAsync(req.body, { abortEarly: false });
         let userId = await db('users').insert({
-            name      : req.body.name,
-            phone     : req.body.phone,
-            email     : req.body.email,
-            password  : await hashPassword(req.body.password),
+            name: req.body.name,
+            phone: req.body.phone,
+            email: req.body.email,
+            password: await hashPassword(req.body.password),
             created_at: new Date(),
         });
 
         let hashString = generateRandomHash(80);
 
         await db('sessions').insert({
-            user_id   : userId,
-            name      : "auth_token",
-            token     : hashString,
+            user_id: userId,
+            name: "auth_token",
+            token: hashString,
             created_at: new Date(),
             expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
         });
-        
+
         setCookie(res, "auth_token", hashString, 6);
 
         return res.redirect('/dashboard');
@@ -138,11 +138,11 @@ const registerUserHandler = async (req, res) => {
     } catch (err) {
         if (err.isJoi) {
             return redirectTo(req, res, "auth/register", {
-                error : mapJoiErrorsByField(err)
+                error: mapJoiErrorsByField(err)
             });
         }
         return redirectTo(req, res, "auth/register", {
-            error : err
+            error: err
         });
     }
 }

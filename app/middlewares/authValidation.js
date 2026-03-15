@@ -1,10 +1,10 @@
-const { setCookie } = require("../libries/helper");
-const db            = require("../libries/mysqlORM");
+const { setCookie } = require("../libraries/helper");
+const db = require("../libraries/mysqlORM");
 
 // The final middleware logic using Knex
 async function authCheckMiddleware(req, res, next) {
     const token = req.cookies.auth_token;
-    
+
     if (!token) {
         return res.redirect('/');
     }
@@ -24,20 +24,20 @@ async function authCheckMiddleware(req, res, next) {
     const dbExpiresAt = new Date(dbSessionData.expires_at).getTime();
 
     if (now > dbExpiresAt) {
-        await db('sessions').where('token', token).del(); 
+        await db('sessions').where('token', token).del();
         setCookie(res, "auth_token", '');
         return res.redirect('/?reason=expired');
     }
 
     // 3. Attach User Data
     req.user = {
-        id        : dbSessionData.user_id,
-        name      : dbSessionData.name,
-        email     : dbSessionData.email,
-        phone     : dbSessionData.phone,
+        id: dbSessionData.user_id,
+        name: dbSessionData.name,
+        email: dbSessionData.email,
+        phone: dbSessionData.phone,
         created_at: dbSessionData.created_at,
     };
-    
+
     next();
 }
 
