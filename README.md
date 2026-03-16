@@ -1,8 +1,9 @@
 # expressSpaAuth
 
-A minimal Laravel-inspired MVC framework built on top of Express.js.
-Brings familiar Laravel patterns — routing, middleware, controllers, component system
-and session auth — to Node.js with zero build step and minimal resource usage.
+A minimal CodeIgniter-inspired MVC framework built on top of Express.js.
+Flexible and unopinionated by design — start small, structure it your way,
+and scale it to enterprise level without rewriting anything.
+Zero build step. Minimal dependencies. Runs anywhere Node.js runs.
 
 > Built for developers who want Laravel's structure without PHP's overhead.
 > Runs on minimal server resources, deploys anywhere Node.js runs.
